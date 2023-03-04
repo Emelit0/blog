@@ -15,7 +15,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params: { slug } }) {
+export async function getStaticProps({ params: { slug } }: any) {
   const fileName = fs.readFileSync(`posts/${slug}.md`, "utf-8");
   const { data: frontmatter, content } = matter(fileName);
   return {
@@ -26,7 +26,7 @@ export async function getStaticProps({ params: { slug } }) {
   };
 }
 
-export default function PostPage({ frontmatter, content }) {
+export default function PostPage({ frontmatter, content }: any) {
   return (
     <div className="prose mx-auto">
       <h1>{frontmatter.title}</h1>
