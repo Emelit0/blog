@@ -1,15 +1,36 @@
 import fs from "fs";
 import matter from "gray-matter";
-import Image from "next/image";
-import Link from "next/link";
+import { sortByDate } from "../utils";
+import path from "path";
+import Post from "../components/Post";
+
+export default function Home({ posts }: any) {
+  return (
+    <div>
+      <title>Dev Blog</title>
+
+      <div className="posts">
+        {posts.map((post: any, index: number) => (
+          <Post key={index} post={post} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export async function getStaticProps() {
-  const files = fs.readdirSync("posts");
+  const files = fs.readdirSync(path.join("posts"));
 
-  const posts = files.map((fileName) => {
-    const slug = fileName.replace(".md", "");
-    const readFile = fs.readFileSync(`posts/${fileName}`, "utf-8");
-    const { data: frontmatter } = matter(readFile);
+  const posts = files.map((filename) => {
+    const slug = filename.replace(".md", "");
+
+    const markdownWithMeta = fs.readFileSync(
+      path.join("posts", filename),
+      "utf-8"
+    );
+
+    const { data: frontmatter } = matter(markdownWithMeta);
+
     return {
       slug,
       frontmatter,
@@ -18,32 +39,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      posts,
+      posts: posts.sort(sortByDate),
     },
   };
-}
-
-export default function Home({ posts }: any) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 p-4 md:p-0">
-      {posts.map(({ slug, frontmatter }: any) => (
-        <div
-          key={slug}
-          className="border border-gray-200 m-2 rounded-xl shadow-lg overflow-hidden flex flex-col"
-        >
-          <Link href={`/post/${slug}`}>
-            <a>
-              <Image
-                width={650}
-                height={340}
-                alt={frontmatter.title}
-                src={`/${frontmatter.socialImage}`}
-              />
-              <h1 className="p-4">{frontmatter.title}</h1>
-            </a>
-          </Link>
-        </div>
-      ))}
-    </div>
-  );
 }
