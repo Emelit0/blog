@@ -4,8 +4,6 @@ import { marked } from "marked";
 import Link from "next/link";
 import path from "path";
 
-marked;
-
 export default function PostPage({
   frontmatter: { title, date, cover_image },
   slug,
