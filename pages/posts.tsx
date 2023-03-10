@@ -1,10 +1,5 @@
-"use client";
-
-import fs from "fs";
-import matter from "gray-matter";
-import { sortByDate } from "../utils";
-import path from "path";
 import Post from "../components/Post";
+import { getSortedPostsData } from "../utils/posts";
 
 export default function Home({ posts }: any) {
   return (
@@ -21,27 +16,10 @@ export default function Home({ posts }: any) {
 }
 
 export async function getStaticProps() {
-  const files = fs.readdirSync(path.join("posts"));
-
-  const posts = files.map((filename) => {
-    const slug = filename.replace(".md", "");
-
-    const markdownWithMeta = fs.readFileSync(
-      path.join("posts", filename),
-      "utf-8"
-    );
-
-    const { data: frontmatter } = matter(markdownWithMeta);
-
-    return {
-      slug,
-      frontmatter,
-    };
-  });
-
+  const allPostsData = getSortedPostsData();
   return {
     props: {
-      posts: posts.sort(sortByDate),
+      posts: allPostsData,
     },
   };
 }
